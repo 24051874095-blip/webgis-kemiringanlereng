@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#173f35">
+<meta name="description" content="WebGIS peta kemiringan lereng Kabupaten Magelang, proyek pembelajaran mahasiswa Perencanaan Wilayah dan Kota UNESA.">
+<title>WebGIS Kemiringan Lereng | PWK UNESA</title>
+<link rel="stylesheet" href="./resources/ol.css">
+<link rel="stylesheet" href="resources/fontawesome-all.min.css">
+<link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
+<link rel="stylesheet" href="./resources/ol-layerswitcher.css">
+<link rel="stylesheet" href="./resources/qgis2web.css">
+<link rel="stylesheet" href="./style.css">
+<style>html,body{width:100%;height:100%;margin:0;padding:0}#popup{z-index:1000}</style>
+</head>
+<body>
+<div id="map" aria-label="Peta interaktif kemiringan lereng Kabupaten Magelang">
+  <div id="popup" class="ol-popup"><a href="#" id="popup-closer" class="ol-popup-closer"></a><div id="popup-content"></div></div>
+</div>
+<aside id="webgis-sidebar" aria-label="Panel informasi WebGIS">
+  <header class="brandbar">
+    <div class="brand-logos">
+      <img src="images/logo-unesa.jpg" alt="Logo UNESA">
+      <img src="images/logo-pwk-unesa.png" alt="Logo Program Studi Perencanaan Wilayah dan Kota UNESA">
+    </div>
+    <div class="brand-title"><div class="eyebrow">Universitas Negeri Surabaya</div><h1>WebGIS Kemiringan Lereng</h1><p>Program Studi Perencanaan Wilayah dan Kota</p></div>
+  </header>
+  <div class="map-badge"><div class="pin">⌖</div><div><strong>Kabupaten Magelang</strong><span>Peta tematik • Kemiringan lereng</span></div></div>
+  <nav class="sidebar-menu" aria-label="Menu WebGIS">
+    <button class="active" data-section="beranda" onclick="showSection('beranda',this)"><span class="ico">⌂</span> Beranda</button>
+    <button data-section="layer" onclick="showSection('layer',this)"><span class="ico">▤</span> Daftar Layer</button>
+    <button data-section="legenda" onclick="showSection('legenda',this)"><span class="ico">◈</span> Legenda Peta</button>
+    <button data-section="informasi" onclick="showSection('informasi',this)"><span class="ico">ⓘ</span> Informasi</button>
+    <button data-section="panduan" onclick="showSection('panduan',this)"><span class="ico">⌖</span> Panduan Peta</button>
+    <button data-section="tentang" onclick="showSection('tentang',this)"><span class="ico">◎</span> Tentang</button>
+  </nav>
+  <main id="sidebar-content" aria-live="polite">
+    <h2>Selamat Datang</h2>
+    <p>WebGIS ini menyajikan informasi kemiringan lereng di Kabupaten Magelang dalam bentuk peta interaktif.</p>
+    <div class="callout">Gunakan peta untuk menelusuri wilayah kajian. Klik fitur pada peta untuk melihat atribut yang tersedia.</div>
+    <div class="meta"><div><small>Wilayah studi</small><b>Kab. Magelang</b></div><div><small>Tema</small><b>Kemiringan lereng</b></div><div><small>Platform</small><b>QGIS + OpenLayers</b></div><div><small>Program studi</small><b>PWK UNESA</b></div></div>
+    <h3>Petunjuk singkat</h3><p>Gunakan tombol zoom pada peta atau scroll mouse untuk memperbesar dan memperkecil tampilan.</p>
+  </main>
+  <footer class="sidebar-footer"><span><strong>PWK UNESA</strong> · Media pembelajaran</span><span>2026</span></footer>
+</aside>
+<button id="sidebar-toggle" aria-label="Tutup panel informasi" title="Buka/tutup panel" onclick="toggleSidebar()">☰</button>
+<script src="resources/qgis2web_expressions.js"></script>
+<script src="./resources/functions.js"></script>
+<script src="./resources/ol.js"></script>
+<script src="./resources/ol-layerswitcher.js"></script>
+<script src="resources/photon-geocoder-autocomplete.min.js"></script>
+<script src="resources/olms.js"></script>
+<script src="layers/magelang_DISSOLVE_1.js"></script>
+<script src="styles/magelang_DISSOLVE_1_style.js"></script>
+<script src="./layers/layers.js" type="text/javascript"></script>
+<script src="./resources/Autolinker.min.js"></script>
+<script src="./resources/qgis2web.js"></script>
+<script>
+function showSection(section,button){
+ const content=document.getElementById('sidebar-content');
+ document.querySelectorAll('.sidebar-menu button').forEach(b=>b.classList.toggle('active',b===button));
+ const pages={
+ beranda:`<h2>Selamat Datang</h2><p>WebGIS ini menyajikan informasi kemiringan lereng Kabupaten Magelang melalui peta interaktif.</p><div class="callout">Klik area pada peta untuk melihat atribut fitur, jika tersedia pada data hasil ekspor.</div><div class="meta"><div><small>Wilayah studi</small><b>Kab. Magelang</b></div><div><small>Tema</small><b>Kemiringan lereng</b></div></div><h3>Petunjuk singkat</h3><p>Gunakan kontrol zoom pada peta atau scroll mouse untuk mengubah skala tampilan.</p>`,
+ layer:`<h2>Daftar Layer</h2><p>Layer yang diekspor dari proyek QGIS ditampilkan melalui kontrol layer pada peta.</p><div class="callout">Gunakan ikon pengaturan layer di area peta untuk mengatur visibilitas layer yang tersedia. Daftar layer mengikuti konfigurasi asli proyek QGIS.</div><p><b>Layer utama:</b> magelang_DISSOLVE_1</p><p class="legend-note">Nama layer ditampilkan sesuai nama pada hasil ekspor qgis2web.</p>`,
+ legenda:`<h2>Legenda Peta</h2><p>Simbol dan warna mengikuti legenda yang dihasilkan dari proyek QGIS.</p><div class="legend-item"><img src="styles/legend/magelang_DISSOLVE_1_0.png" alt="Simbol kelas 1"><span>Kelas kemiringan — simbol 1</span></div><div class="legend-item"><img src="styles/legend/magelang_DISSOLVE_1_1.png" alt="Simbol kelas 2"><span>Kelas kemiringan — simbol 2</span></div><div class="legend-item"><img src="styles/legend/magelang_DISSOLVE_1_2.png" alt="Simbol kelas 3"><span>Kelas kemiringan — simbol 3</span></div><div class="legend-item"><img src="styles/legend/magelang_DISSOLVE_1_3.png" alt="Simbol kelas 4"><span>Kelas kemiringan — simbol 4</span></div><div class="legend-item"><img src="styles/legend/magelang_DISSOLVE_1_4.png" alt="Simbol kelas 5"><span>Kelas kemiringan — simbol 5</span></div><p class="legend-note">Nama dan rentang kelas perlu disamakan dengan klasifikasi yang digunakan pada proyek QGIS.</p>`,
+ informasi:`<h2>Informasi Peta</h2><p><b>Judul:</b> Peta Kemiringan Lereng Kabupaten Magelang</p><p><b>Wilayah:</b> Kabupaten Magelang, Jawa Tengah</p><p><b>Perangkat:</b> QGIS dan qgis2web (OpenLayers)</p><p><b>Tujuan:</b> Menampilkan data spasial kemiringan lereng untuk kebutuhan pembelajaran dan analisis kewilayahan.</p><div class="callout">Lengkapi sumber data, tahun data, sistem koordinat, dan metode klasifikasi berdasarkan metadata proyek yang sebenarnya.</div>`,
+ panduan:`<h2>Panduan Penggunaan</h2><h3>Navigasi</h3><p>• Zoom in/out menggunakan tombol + dan − pada peta.</p><p>• Geser peta dengan menekan lalu menarik area peta.</p><p>• Klik objek untuk melihat atribut yang tersedia.</p><p>• Gunakan kontrol layer untuk mengubah tampilan layer jika tersedia.</p><h3>Catatan akademik</h3><p>Pastikan interpretasi kelas lereng mengacu pada klasifikasi yang dipakai dalam analisis QGIS dan cantumkan sumber datanya.</p>`,
+ tentang:`<h2>Tentang WebGIS</h2><p>WebGIS ini disusun sebagai media pembelajaran Sistem Informasi Geografis untuk mahasiswa Program Studi Perencanaan Wilayah dan Kota, Universitas Negeri Surabaya.</p><div class="callout"><b>Topik:</b> Kemiringan lereng Kabupaten Magelang<br><b>Teknologi:</b> QGIS, qgis2web, HTML, CSS, dan OpenLayers.</div><p class="legend-note">Identitas visual menggunakan logo UNESA dan logo Program Studi PWK yang disediakan pengguna.</p>`
+ };
+ content.innerHTML=pages[section]||pages.beranda;
+}
+function toggleSidebar(){
+ const sidebar=document.getElementById('webgis-sidebar'); const btn=document.getElementById('sidebar-toggle');
+ sidebar.classList.toggle('closed'); btn.classList.toggle('closed');
+ const closed=sidebar.classList.contains('closed');
+ btn.setAttribute('aria-label',closed?'Buka panel informasi':'Tutup panel informasi');
+ btn.textContent=closed?'☰':'×';
+ const map=document.getElementById('map');
+ if(window.innerWidth>760) map.style.right=closed?'0':'360px';
+ if(window.olMap && typeof window.olMap.updateSize==='function') setTimeout(()=>window.olMap.updateSize(),320);
+}
+window.addEventListener('resize',()=>{const sidebar=document.getElementById('webgis-sidebar');const map=document.getElementById('map');if(window.innerWidth<=760)map.style.right='0';else map.style.right=sidebar.classList.contains('closed')?'0':'360px';});
+</script>
+</body>
+</html>
